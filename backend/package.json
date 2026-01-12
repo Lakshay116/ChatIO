@@ -19,9 +19,11 @@
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.21.0",
     "nodemailer": "^7.0.12",
-    "resend": "^6.7.0"
+    "resend": "^6.7.0",
+    "socketio": "^1.0.0"
   }
 }
