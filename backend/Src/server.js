@@ -7,16 +7,16 @@ import messageRoutes from "./routes/message.route.js"
 import path from "path"
 import { connectDB } from "./lib/db.js"
 import cors from "cors";
+import { app, server } from "./lib/socket.js"
 
 
 dotenv.config();
-const app = express();
 const PORT = process.env.PORT || 3000;
 
 const __dirname = path.resolve();
 
 
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
@@ -32,7 +32,7 @@ if (process.env.NODE_ENV == "production") {
     })
 }
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Listen on port ${PORT}.`);
     connectDB();
 })  
