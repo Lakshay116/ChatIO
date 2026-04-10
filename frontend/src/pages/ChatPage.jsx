@@ -7,6 +7,7 @@ import ChatsList from "../components/ChatsList";
 import ContactList from "../components/ContactList";
 import ChatContainer from "../components/ChatContainer";
 import NoConversationPlaceholder from "../components/NoConversationPlaceholder";
+import VideoCallOverlay from "../components/VideoCallOverlay";
 
 function ChatPage() {
   const { activeTab, selectedUser } = useChatStore();
@@ -29,6 +30,7 @@ function ChatPage() {
           {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
         </div>
       </BorderAnimatedContainer>
+      <VideoCallOverlay />
     </div>
   );
 }

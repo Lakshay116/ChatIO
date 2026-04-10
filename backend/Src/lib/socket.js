@@ -35,8 +35,66 @@ io.on("connection", (socket) => {
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     // with socket.on we listen for events from clients
+    socket.on("call:invite", ({ to, offer }) => {
+        const receiverSocketId = getReceiverSocketId(to);
+
+        if (!receiverSocketId) {
+            socket.emit("call:error", {
+                type: "offline",
+                to,
+                message: "User is offline",
+            });
+            return;
+        }
+
+        io.to(receiverSocketId).emit("call:incoming", {
+            from: userId,
+            fromUser: socket.user,
+            offer,
+        });
+    });
+
+    socket.on("call:accept", ({ to, answer }) => {
+        const receiverSocketId = getReceiverSocketId(to);
+        if (!receiverSocketId) return;
+
+        io.to(receiverSocketId).emit("call:accepted", {
+            from: userId,
+            answer,
+        });
+    });
+
+    socket.on("call:reject", ({ to }) => {
+        const receiverSocketId = getReceiverSocketId(to);
+        if (!receiverSocketId) return;
+
+        io.to(receiverSocketId).emit("call:rejected", {
+            from: userId,
+        });
+    });
+
+    socket.on("call:end", ({ to }) => {
+        const receiverSocketId = getReceiverSocketId(to);
+        if (!receiverSocketId) return;
+
+        io.to(receiverSocketId).emit("call:ended", {
+            from: userId,
+        });
+    });
+
+    socket.on("call:signal", ({ to, candidate }) => {
+        const receiverSocketId = getReceiverSocketId(to);
+        if (!receiverSocketId) return;
+
+        io.to(receiverSocketId).emit("call:signal", {
+            from: userId,
+            candidate,
+        });
+    });
+
     socket.on("disconnect", () => {
         console.log("A user disconnected", socket.user.fullName);
+        io.emit("call:user-disconnected", { userId });
         delete userSocketMap[userId];
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });

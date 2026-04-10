@@ -1,12 +1,24 @@
-import { XIcon } from "lucide-react";
+import { PhoneCall, XIcon } from "lucide-react";
 import { useChatStore } from "../store/useChatStore";
 import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import { useCallStore } from "../store/useCallStore";
+import toast from "react-hot-toast";
 
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
+  const { startCall, incomingCall, outgoingCall, activeCall } = useCallStore();
   const isOnline = onlineUsers.includes(selectedUser._id);
+  const isCallBusy = Boolean(incomingCall || outgoingCall || activeCall);
+
+  const handleStartCall = () => {
+    if (!isOnline) {
+      toast.error("User must be online to start a video call");
+      return;
+    }
+    startCall(selectedUser);
+  };
 
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -44,9 +56,20 @@ function ChatHeader() {
         </div>
       </div>
 
-      <button onClick={() => setSelectedUser(null)}>
-        <XIcon className="w-5 h-5 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer" />
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleStartCall}
+          disabled={!isOnline || isCallBusy}
+          title={!isOnline ? "User is offline" : "Start video call"}
+          className="btn btn-sm bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700 disabled:opacity-50"
+        >
+          <PhoneCall className="size-4" />
+          Video Call
+        </button>
+        <button onClick={() => setSelectedUser(null)}>
+          <XIcon className="w-5 h-5 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer" />
+        </button>
+      </div>
     </div>
   );
 }
