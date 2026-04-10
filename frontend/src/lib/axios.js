@@ -3,6 +3,6 @@ import axios from "axios";
 
 
 export const axiosInstance = axios.create({
-    baseURL: import.meta.env.MODE = "development" ? "https://chatio-bp7g.onrender.com/api" : "http://localhost:3000/api",
+    baseURL: import.meta.env.MODE = "development" ? "https://chatio-bp7g.onrender.com/api" : "https://chatio-bp7g.onrender.com/api",
     withCredentials: true,
 })
